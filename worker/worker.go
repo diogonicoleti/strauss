@@ -4,7 +4,7 @@ import (
 	"diogonicoleti/strauss/task"
 	"fmt"
 
-	"github.com/golang-collections/collections/queue"
+	"github.com/Workiva/go-datastructures/queue"
 	"github.com/google/uuid"
 )
 
