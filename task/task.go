@@ -121,8 +121,10 @@ func (d *Docker) Run() DockerResult {
 	// TODO: Add the runtime information
 	// d.Config.Runtime.ContainerID = resp.ID
 
-	out, err := d.Client.ContainerLogs(ctx, resp.ID,
-		container.LogsOptions{ShowStdout: true, ShowStderr: true})
+	out, err := d.Client.ContainerLogs(ctx, resp.ID, container.LogsOptions{
+		ShowStdout: true,
+		ShowStderr: true,
+	})
 	if err != nil {
 		log.Printf("Error getting logs for container %s: %v\n",
 			resp.ID, err)
@@ -131,4 +133,27 @@ func (d *Docker) Run() DockerResult {
 
 	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 	return DockerResult{ContainerId: resp.ID, Action: "start", Result: "success"}
+}
+
+func (d *Docker) Stop(id string) DockerResult {
+	log.Printf("Attempting to stop container %v", id)
+	ctx := context.Background()
+
+	err := d.Client.ContainerStop(ctx, id, container.StopOptions{})
+	if err != nil {
+		log.Printf("Error stopping container %s: %v\n", id, err)
+		return DockerResult{Error: err}
+	}
+
+	err = d.Client.ContainerRemove(ctx, id, container.RemoveOptions{
+		RemoveVolumes: true,
+		RemoveLinks:   false,
+		Force:         false,
+	})
+	if err != nil {
+		log.Printf("Error removing container %s: %v\n", id, err)
+		return DockerResult{Error: err}
+	}
+
+	return DockerResult{Action: "stop", Result: "success"}
 }
