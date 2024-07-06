@@ -84,6 +84,7 @@ func (d *Docker) Run() DockerResult {
 		return DockerResult{Error: err}
 	}
 
+	defer reader.Close()
 	io.Copy(os.Stdout, reader)
 
 	cc := container.Config{
