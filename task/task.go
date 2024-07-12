@@ -38,6 +38,8 @@ type Task struct {
 	RestartPolicy string
 	StartTime     time.Time
 	FinishTime    time.Time
+
+	ContainerID string
 }
 
 type TaskEvent struct {
@@ -72,6 +74,14 @@ type DockerResult struct {
 	Action      string
 	ContainerId string
 	Result      string
+}
+
+func NewConfig(t *Task) *Config {
+	return &Config{}
+}
+
+func NewDocker(c *Config) *Docker {
+	return &Docker{}
 }
 
 func (d *Docker) Run() DockerResult {
